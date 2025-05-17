@@ -18,20 +18,26 @@ jobs:
         with:
           node-version: 18
 
-      - name: Install dependencies
-        working-directory: Develop/client
-        run: npm install
+      - name: Install root dependencies
+        run: |
+          cd Develop
+          npm install
 
-      - name: Start dev server
-        working-directory: Develop/client
-        run: npm run dev -- --port 5173 &
+      - name: Install ts-node for TS config support
+        run: |
+          cd Develop
+          npm install --no-save ts-node
 
-      - name: Wait for server to be ready
+      - name: Start client dev server
+        run: |
+          cd Develop/client
+          npm install
+          npm run dev -- --port 5173 &
+
+      - name: Wait for dev server
         run: npx wait-on http://localhost:5173
 
       - name: Run Cypress component tests
-        working-directory: Develop/client
-        uses: cypress-io/github-action@v5
-        with:
-          start: npm run dev -- --port 5173
-          config-file: ../../cypress.config.ts
+        run: |
+          cd Develop
+          npx cypress run --component --config-file cypress.config.ts

@@ -9,4 +9,5 @@ function App() {
 }
 
 export default App;
-console.log('🚀 CI pipeline test');
+console.log('CI pipeline test');
+ci-retest ping 
