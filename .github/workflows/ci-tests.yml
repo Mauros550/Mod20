@@ -30,6 +30,7 @@ jobs:
         run: npx wait-on http://localhost:5173
 
       - name: Run Cypress component tests
+        working-directory: ./Develop/client
         uses: cypress-io/github-action@v5
         with:
           start: npm run dev -- --port 5173
