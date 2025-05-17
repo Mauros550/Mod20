@@ -18,14 +18,20 @@ jobs:
         with:
           node-version: 18
 
-      - name: Install client dependencies
+      - name: Install root dependencies
         run: |
-          cd Develop/client
+          cd Develop
           npm install
+
+      - name: Install ts-node for TS config support
+        run: |
+          cd Develop
+          npm install --no-save ts-node
 
       - name: Start client dev server
         run: |
           cd Develop/client
+          npm install
           npm run dev -- --port 5173 &
 
       - name: Wait for dev server
