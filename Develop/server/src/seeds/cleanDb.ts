@@ -3,11 +3,11 @@ import db from '../config/connection.js';
 
 export default async (modelName: 'Question', collectionName: string) => {
   try {
-    // We know models[modelName] exists, so assert with "!"
+    // Assert that models[modelName] is defined
     const model = models[modelName]!;
 
-    // drill down to the native MongoDB driver
-    const nativeDb = model.db.db;
+    // Assert that model.db and model.db.db are defined
+    const nativeDb = model.db!.db!;
 
     // check if the collection already exists
     const modelExists = await nativeDb
