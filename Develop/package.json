@@ -1,7 +1,6 @@
 {
   "name": "coding-quiz",
   "version": "1.0.0",
-  "description": "",
   "scripts": {
     "start": "cd server && npm run start",
     "seed": "cd server && npm run seed",
@@ -17,14 +16,17 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "concurrently": "^8.2.0",
+    "concurrently": "^8.2.2",
     "cypress": "^13.13.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "serve": "^14.2.4",
     "ts-node": "^10.9.2"
   },
   "dependencies": {
     "@vitejs/plugin-react": "^4.3.1",
     "vitest": "^2.0.3"
-  }
+  },
+  "main": "index.js",
+  "description": ""
 }
