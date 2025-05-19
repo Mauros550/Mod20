@@ -1,14 +1,30 @@
-import db from "../config/connection.js";
-import Question from "../models/Question.js";
-import cleanDB from "./cleanDb.js";
+import fs from 'fs';
+import path from 'path';
+// side‐effect import to initialize Mongoose
+import '../config/connection.js';
+// @ts-ignore
+import models from '../models/index.js';
 
-import pythonQuestions from './pythonQuestions.json' assert { type: "json" };
+async function seed() {
+  try {
+    // load JSON at runtime
+    const filePath = path.join(__dirname, 'pythonQuestions.json');
+    const raw = fs.readFileSync(filePath, 'utf-8');
+    const questions = JSON.parse(raw);
 
-db.once('open', async () => {
-  await cleanDB('Question', 'questions');
+    // grab the Question model
+    const Question = models['Question']!;
 
-  await Question.insertMany(pythonQuestions);
+    // clear & re-insert
+    await Question.deleteMany({});
+    await Question.insertMany(questions);
 
-  console.log('Questions seeded!');
-  process.exit(0);
-});
+    console.log(`🌱 Seeded ${questions.length} questions.`);
+    process.exit(0);
+  } catch (err) {
+    console.error('Seeding failed', err);
+    process.exit(1);
+  }
+}
+
+seed();
