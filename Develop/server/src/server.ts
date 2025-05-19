@@ -1,6 +1,6 @@
 import path from 'path';
 import { fileURLToPath } from 'url';
-import express, { Request, Response } from 'express';
+import express, { Request, Response, } from 'express';
 import db from './config/connection.js';
 import apiRoutes from './routes/index.js';
 
@@ -11,20 +11,25 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-// Body parsing middleware
+// Body parsing
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 // Mount API routes
 app.use('/api', apiRoutes);
 
-// Serve the React build from client/dist
+// Serve static files from the React build
 const clientDistPath = path.join(__dirname, '../../client/dist');
 app.use(express.static(clientDistPath));
 
-// SPA catch-all: return index.html for any other requests
-app.get('*', (_req: Request, res: Response) => {
+// **SPA catch-all for non-API routes**
+app.get(/^(?!\/api\/).*/, (_req: Request, res: Response) => {
   res.sendFile(path.join(clientDistPath, 'index.html'));
+});
+
+// Error out API requests that didn’t match
+app.use('/api/*', (_req: Request, res: Response) => {
+  res.status(404).json({ error: 'API route not found' });
 });
 
 // Start server after DB connection
