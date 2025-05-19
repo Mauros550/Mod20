@@ -1,14 +1,27 @@
-import db from "../config/connection.js";
-import Question from "../models/Question.js";
-import cleanDB from "./cleanDb.js";
+import fs from 'fs';
+import path from 'path';
 
-import pythonQuestions from './pythonQuestions.json' assert { type: "json" };
+// Side‐effect import to initialize your DB connection
+import '../config/connection.js';
+// @ts-ignore - we know this JS file exists
+import models from '../models/index.js';
 
-db.once('open', async () => {
-  await cleanDB('Question', 'questions');
+async function seed() {
+  try {
+    const filePath = path.join(__dirname, 'pythonQuestions.json');
+    const raw = fs.readFileSync(filePath, 'utf-8');
+    const questions = JSON.parse(raw);
 
-  await Question.insertMany(pythonQuestions);
+    const Question = models['Question']!;
+    await Question.deleteMany({});
+    await Question.insertMany(questions);
 
-  console.log('Questions seeded!');
-  process.exit(0);
-});
+    console.log(`🌱 Seeded ${questions.length} questions.`);
+    process.exit(0);
+  } catch (err) {
+    console.error('Seeding failed', err);
+    process.exit(1);
+  }
+}
+
+seed();
