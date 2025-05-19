@@ -1,8 +1,9 @@
+// Develop/server/src/server.ts
 import path from 'path';
 import { fileURLToPath } from 'url';
-import express, { Request, Response, } from 'express';
+import express, { Request, Response } from 'express';
 import db from './config/connection.js';
-import apiRoutes from './routes/index.js';
+import router from './routes/index.js';  // changed import name
 
 // Polyfill __dirname in ESM
 const __filename = fileURLToPath(import.meta.url);
@@ -15,19 +16,19 @@ const PORT = process.env.PORT || 3001;
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-// Mount API routes
-app.use('/api', apiRoutes);
+// All API and catch-all routes
+app.use('/api', router);
 
 // Serve static files from the React build
-const clientDistPath = path.join(__dirname, '../../client/dist');
-app.use(express.static(clientDistPath));
+const clientDist = path.join(__dirname, '../../client/dist');
+app.use(express.static(clientDist));
 
-// **SPA catch-all for non-API routes**
+// SPA catch-all for non-API routes
 app.get(/^(?!\/api\/).*/, (_req: Request, res: Response) => {
-  res.sendFile(path.join(clientDistPath, 'index.html'));
+  res.sendFile(path.join(clientDist, 'index.html'));
 });
 
-// Error out API requests that didn’t match
+// 404 for bad API calls
 app.use('/api/*', (_req: Request, res: Response) => {
   res.status(404).json({ error: 'API route not found' });
 });
