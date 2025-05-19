@@ -1,6 +1,12 @@
 import fs from 'fs';
 import path from 'path';
-// side‐effect import to initialize Mongoose
+import { fileURLToPath } from 'url';
+
+// Polyfill __dirname
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// side‐effect import to connect mongoose
 import '../config/connection.js';
 // @ts-ignore
 import models from '../models/index.js';
